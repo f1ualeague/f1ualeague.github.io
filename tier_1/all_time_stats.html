@@ -1,0 +1,1734 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1UA Stats</title>
+    <style>
+        :root { --main-color: #d61d1d; --hover-color: rgba(214, 29, 29, 0.2); }
+
+        @font-face {
+            font-family: 'Formula1 Display';
+            src: url('fonts/Formula1-Regular-1.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Formula1 Display';
+            src: url('fonts/Formula1-Bold-4.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Formula1 Display Wide';
+            src: url('fonts/Formula1-Wide.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Formula1 Display';
+            src: url('fonts/Formula1-Black.ttf') format('truetype');
+            font-weight: 900; /* Black weight */
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Formula1 Display';
+            src: url('fonts/Formula1-Italic.ttf') format('truetype');
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        body {
+            font-family: 'Formula1 Display', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            background-color: #1e1e1e;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        h1, h2, h3, .site-header .logo-area .logo-text a {
+            font-family: 'Formula1 Display Wide', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        h1, h2, h3 {
+            color: #ffffff;
+            margin-top: 20px;
+        }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--main-color);
+            padding-bottom: 10px;
+        }
+        .content-header h2 {
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+        h1 { font-size: 2.5em; }
+        h2 { font-size: 1.8em; }
+        h3 { font-size: 1.5em; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #333;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #3a3a3a;
+        }
+        a {
+            color: #64b5f6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .info-card {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .info-card h3 {
+            margin-top: 0;
+            color: var(--main-color);
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        .profile-pic, .track-pic {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 3px solid #444;
+        }
+        .subtitle {
+            color: #aaa;
+            margin-top: 5px; /* Adjusted margin */
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        /* --- Styles for Header, Footer, and Tier Switcher --- */
+        .site-header {
+            background-color: #1e1e1e;
+            padding: 15px 40px;
+            border-bottom: 2px solid var(--main-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .site-header .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        .site-header .logo-text a {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 600px) {
+            .container {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+        
+            .site-header {
+                flex-wrap: wrap;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .site-header .logo-area {
+                margin-bottom: 16px;
+                justify-content: space-between;
+                flex: 0 1 100%;
+            }
+
+            .site-header .logo-text a {
+                font-size: 1.2em;
+            }
+
+            .site-nav {
+                display: flex;
+            }
+
+            .site-nav a {
+                font-size: 14px;
+                padding: 6px !important;
+                margin-left: 0 !important;
+            }
+
+            .seasons-grid {
+                grid-template-columns: repeat(2, minmax(150px, 1fr)) !important;
+            }
+        }
+
+        .history-nav {
+            display: flex;
+            gap: 5px;
+        }
+        .history-nav a {
+            color: #e0e0e0;
+            background-color: #333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.2s ease-in-out;
+            line-height: 1;
+        }
+        .history-nav a:hover {
+            background-color: var(--main-color);
+            color: #ffffff;
+        }
+        .site-nav a {
+            color: #e0e0e0;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .site-nav a:hover, .site-nav a.active {
+            background-color: var(--main-color);
+            color: #ffffff;
+        }
+        .site-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #888;
+            font-size: 0.9em;
+        }
+        .sponsors {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            padding: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 600px) {
+            .sponsors {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        .sponsors img {
+            height: 35px;
+            width: auto;
+            filter: brightness(0.9) contrast(1.1) saturate(0.8);
+        }
+        .sponsors .okuni-logo {
+            height: 45px;
+        }
+        .tier-switcher {
+            position: relative;
+            display: inline-block;
+        }
+        .tier-switcher-btn {
+            background-color: #333;
+            color: #e0e0e0;
+            padding: 8px 12px;
+            font-size: 1em;
+            border: 1px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Formula1 Display', sans-serif;
+        }
+        .tier-switcher-content {
+            display: none;
+            position: absolute;
+            background-color: #2a2a2a;
+            min-width: 100px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+        }
+        .tier-switcher-content a {
+            color: #e0e0e0;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .tier-switcher-content a:hover { background-color: var(--main-color); }
+        .tier-switcher:hover .tier-switcher-content { display: block; }
+        .tier-switcher:hover .tier-switcher-btn { background-color: #444; }
+
+        tr.gold { background-color: rgba(255, 215, 0, 0.1); }
+        tr.silver { background-color: rgba(192, 192, 192, 0.1); }
+        tr.bronze { background-color: rgba(205, 127, 50, 0.15); }
+        
+        .chart-container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        /* --- Season Card Styles --- */
+        .seasons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .season-card {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #e0e0e0;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+        .season-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px var(--hover-color);
+            text-decoration: none;
+        }
+        .season-card .season-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        .season-card .race-count {
+            font-size: 1em;
+            color: #aaa;
+            margin-top: 15px;
+        }
+        
+        /* --- New styles for combined card --- */
+        .two-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 20px;
+        }
+        .info-card h4 {
+            margin-top: 0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+            color: var(--main-color);
+            font-family: 'Formula1 Display Wide', sans-serif;
+        }
+        /* --- NEW STYLE FOR RECORDS PAGE --- */
+        .records-grid-bottom {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="logo-area">
+            <div class="logo-text"><a href="index.html">F1UA League Stats</a></div>
+            <div class="tier-switcher">
+                <button class="tier-switcher-btn">Masters &#9662;</button>
+                <div class="tier-switcher-content">
+                    <a href="../tier_2/all_time_stats.html">Contenders</a>
+                </div>
+            </div>
+        </div>
+        <nav class="site-nav">
+            <a href="index.html" class="">Home</a>
+            <a href="all_time_stats.html" class="active">All-Time</a>
+            <a href="elo_ratings.html" class="">Elo Ratings</a>
+            <a href="all_tracks.html" class="">Tracks</a>
+            <a href="records.html" class="">Records</a>
+        </nav>
+    </header>
+    <div class="container">
+        
+    <div class="content-header">
+        <h2>All-Time Driver Statistics</h2>
+        
+<div class="history-nav">
+    <a href="javascript:history.back()" title="Back">&#9664;</a>
+    <a href="javascript:history.forward()" title="Forward">&#9654;</a>
+</div>
+
+    </div>
+    <p class='subtitle'>After S13 R09</p><table><thead><tr><th>Rank</th><th>Driver</th><th>Races</th><th>DNFs</th><th>Points</th><th>Wins</th><th>Poles</th><th>FLs</th><th>Podiums</th><th>Avg Qualy</th><th>Avg Finish</th><th>Best Season Rank</th></tr></thead><tbody>
+        <tr class='gold'>
+            <td>1</td>
+            <td><a href='./drivers/1.html'>Volodymyr Fed</a></td>
+            <td>203</td>
+            <td>16</td>
+            <td>3691</td>
+            <td>91</td>
+            <td>62</td>
+            <td>94</td>
+            <td>145</td>
+            <td>3.68</td>
+            <td>2.64</td>
+            <td>P1 (S01, S02, S03, S06, S07, S08, S09)</td>
+        </tr>
+        <tr class='silver'>
+            <td>2</td>
+            <td><a href='./drivers/19.html'>Volodymyr Polischuk</a></td>
+            <td>159</td>
+            <td>13</td>
+            <td>1920</td>
+            <td>23</td>
+            <td>27</td>
+            <td>14</td>
+            <td>75</td>
+            <td>6.34</td>
+            <td>4.95</td>
+            <td>P1 (S04, S05)</td>
+        </tr>
+        <tr class='bronze'>
+            <td>3</td>
+            <td><a href='./drivers/2.html'>Sviatoslav Kuznetsov</a></td>
+            <td>110</td>
+            <td>18</td>
+            <td>1357</td>
+            <td>18</td>
+            <td>6</td>
+            <td>20</td>
+            <td>55</td>
+            <td>5.43</td>
+            <td>4.11</td>
+            <td>P2 (S01, S02, S03)</td>
+        </tr>
+        <tr >
+            <td>4</td>
+            <td><a href='./drivers/3.html'>Kostiantyn Tauchelov</a></td>
+            <td>155</td>
+            <td>13</td>
+            <td>1131</td>
+            <td>3</td>
+            <td>0</td>
+            <td>1</td>
+            <td>16</td>
+            <td>7.17</td>
+            <td>6.58</td>
+            <td>P3 (S06)</td>
+        </tr>
+        <tr >
+            <td>5</td>
+            <td><a href='./drivers/53.html'>Marko Yemets</a></td>
+            <td>55</td>
+            <td>4</td>
+            <td>1128</td>
+            <td>28</td>
+            <td>10</td>
+            <td>9</td>
+            <td>45</td>
+            <td>4.37</td>
+            <td>1.98</td>
+            <td>P1 (S10, S12)</td>
+        </tr>
+        <tr >
+            <td>6</td>
+            <td><a href='./drivers/12.html'>Yevhenii Bondarenko</a></td>
+            <td>196</td>
+            <td>20</td>
+            <td>1037</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>9</td>
+            <td>11.52</td>
+            <td>7.95</td>
+            <td>P6 (S04, S06, S07)</td>
+        </tr>
+        <tr >
+            <td>7</td>
+            <td><a href='./drivers/54.html'>Yulian Hulyk</a></td>
+            <td>61</td>
+            <td>8</td>
+            <td>991</td>
+            <td>12</td>
+            <td>37</td>
+            <td>12</td>
+            <td>38</td>
+            <td>2.54</td>
+            <td>2.89</td>
+            <td>P1 (S11)</td>
+        </tr>
+        <tr >
+            <td>8</td>
+            <td><a href='./drivers/37.html'>Maksym Rusov</a></td>
+            <td>92</td>
+            <td>15</td>
+            <td>950</td>
+            <td>3</td>
+            <td>6</td>
+            <td>11</td>
+            <td>35</td>
+            <td>5.80</td>
+            <td>5.03</td>
+            <td>P2 (S07, S09)</td>
+        </tr>
+        <tr >
+            <td>9</td>
+            <td><a href='./drivers/20.html'>Serhii Kozakevych</a></td>
+            <td>142</td>
+            <td>49</td>
+            <td>873</td>
+            <td>1</td>
+            <td>2</td>
+            <td>12</td>
+            <td>26</td>
+            <td>8.27</td>
+            <td>6.45</td>
+            <td>P3 (S04)</td>
+        </tr>
+        <tr >
+            <td>10</td>
+            <td><a href='./drivers/4.html'>Serhii Tauchelov</a></td>
+            <td>104</td>
+            <td>20</td>
+            <td>777</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>18</td>
+            <td>6.85</td>
+            <td>5.70</td>
+            <td>P5 (S01, S02, S04)</td>
+        </tr>
+        <tr >
+            <td>11</td>
+            <td><a href='./drivers/5.html'>Robert Lapko</a></td>
+            <td>151</td>
+            <td>33</td>
+            <td>689</td>
+            <td>1</td>
+            <td>0</td>
+            <td>3</td>
+            <td>12</td>
+            <td>8.83</td>
+            <td>7.84</td>
+            <td>P7 (S02)</td>
+        </tr>
+        <tr >
+            <td>12</td>
+            <td><a href='./drivers/6.html'>Dmytro Zabotkin</a></td>
+            <td>55</td>
+            <td>2</td>
+            <td>641</td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>21</td>
+            <td>5.67</td>
+            <td>4.32</td>
+            <td>P3 (S01, S03)</td>
+        </tr>
+        <tr >
+            <td>13</td>
+            <td><a href='./drivers/7.html'>Taras Bastanogov</a></td>
+            <td>101</td>
+            <td>36</td>
+            <td>602</td>
+            <td>3</td>
+            <td>0</td>
+            <td>1</td>
+            <td>17</td>
+            <td>10.72</td>
+            <td>6.38</td>
+            <td>P4 (S01)</td>
+        </tr>
+        <tr >
+            <td>14</td>
+            <td><a href='./drivers/13.html'>Herman Rogov</a></td>
+            <td>64</td>
+            <td>10</td>
+            <td>511</td>
+            <td>3</td>
+            <td>0</td>
+            <td>7</td>
+            <td>18</td>
+            <td>7.73</td>
+            <td>6.46</td>
+            <td>P2 (S04)</td>
+        </tr>
+        <tr >
+            <td>15</td>
+            <td><a href='./drivers/38.html'>Ihor Volkov</a></td>
+            <td>30</td>
+            <td>1</td>
+            <td>501</td>
+            <td>7</td>
+            <td>7</td>
+            <td>0</td>
+            <td>22</td>
+            <td>3.94</td>
+            <td>3.34</td>
+            <td>P2 (S08)</td>
+        </tr>
+        <tr >
+            <td>16</td>
+            <td><a href='./drivers/14.html'>Taras Hnatyuk</a></td>
+            <td>161</td>
+            <td>43</td>
+            <td>474</td>
+            <td>1</td>
+            <td>0</td>
+            <td>1</td>
+            <td>3</td>
+            <td>12.01</td>
+            <td>9.34</td>
+            <td>P9 (S02, S06)</td>
+        </tr>
+        <tr >
+            <td>17</td>
+            <td><a href='./drivers/27.html'>Dmytro Bugai</a></td>
+            <td>74</td>
+            <td>13</td>
+            <td>462</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>4</td>
+            <td>7.21</td>
+            <td>6.74</td>
+            <td>P7 (S06, S07)</td>
+        </tr>
+        <tr >
+            <td>18</td>
+            <td><a href='./drivers/8.html'>Anatoliy Savytskyi</a></td>
+            <td>25</td>
+            <td>4</td>
+            <td>425</td>
+            <td>10</td>
+            <td>6</td>
+            <td>4</td>
+            <td>20</td>
+            <td>3.71</td>
+            <td>2.19</td>
+            <td>P3 (S02)</td>
+        </tr>
+        <tr >
+            <td>19</td>
+            <td><a href='./drivers/78.html'>Liubomyr Mashkara</a></td>
+            <td>39</td>
+            <td>4</td>
+            <td>396</td>
+            <td>2</td>
+            <td>6</td>
+            <td>2</td>
+            <td>10</td>
+            <td>5.13</td>
+            <td>5.57</td>
+            <td>P1 (S13)</td>
+        </tr>
+        <tr >
+            <td>20</td>
+            <td><a href='./drivers/65.html'>Mykhailo Lemeshev</a></td>
+            <td>41</td>
+            <td>4</td>
+            <td>360</td>
+            <td>1</td>
+            <td>0</td>
+            <td>3</td>
+            <td>9</td>
+            <td>7.07</td>
+            <td>5.89</td>
+            <td>P3 (S12)</td>
+        </tr>
+        <tr >
+            <td>21</td>
+            <td><a href='./drivers/79.html'>Timothy Lubavin</a></td>
+            <td>26</td>
+            <td>2</td>
+            <td>349</td>
+            <td>6</td>
+            <td>3</td>
+            <td>3</td>
+            <td>11</td>
+            <td>6.35</td>
+            <td>4.29</td>
+            <td>P3 (S13)</td>
+        </tr>
+        <tr >
+            <td>22</td>
+            <td><a href='./drivers/46.html'>Yevhenii Kulynych</a></td>
+            <td>50</td>
+            <td>10</td>
+            <td>340</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>7</td>
+            <td>7.61</td>
+            <td>6.45</td>
+            <td>P5 (S09)</td>
+        </tr>
+        <tr >
+            <td>23</td>
+            <td><a href='./drivers/47.html'>Dmytro Samborckiy</a></td>
+            <td>59</td>
+            <td>9</td>
+            <td>331</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>4</td>
+            <td>9.69</td>
+            <td>8.00</td>
+            <td>P6 (S08)</td>
+        </tr>
+        <tr >
+            <td>24</td>
+            <td><a href='./drivers/21.html'>Danylo Zen</a></td>
+            <td>30</td>
+            <td>2</td>
+            <td>324</td>
+            <td>1</td>
+            <td>4</td>
+            <td>7</td>
+            <td>13</td>
+            <td>4.50</td>
+            <td>4.79</td>
+            <td>P2 (S05)</td>
+        </tr>
+        <tr >
+            <td>25</td>
+            <td><a href='./drivers/15.html'>Vitaliy Shvets</a></td>
+            <td>46</td>
+            <td>5</td>
+            <td>298</td>
+            <td>1</td>
+            <td>0</td>
+            <td>2</td>
+            <td>5</td>
+            <td>7.29</td>
+            <td>6.66</td>
+            <td>P4 (S03)</td>
+        </tr>
+        <tr >
+            <td>26</td>
+            <td><a href='./drivers/55.html'>Ivan Korniienko</a></td>
+            <td>51</td>
+            <td>16</td>
+            <td>268</td>
+            <td>1</td>
+            <td>0</td>
+            <td>2</td>
+            <td>4</td>
+            <td>9.44</td>
+            <td>7.91</td>
+            <td>P5 (S10)</td>
+        </tr>
+        <tr >
+            <td>27</td>
+            <td><a href='./drivers/81.html'>Viacheslav Vasylenko</a></td>
+            <td>38</td>
+            <td>5</td>
+            <td>262</td>
+            <td>0</td>
+            <td>0</td>
+            <td>7</td>
+            <td>3</td>
+            <td>5.97</td>
+            <td>7.21</td>
+            <td>P6 (S13)</td>
+        </tr>
+        <tr >
+            <td>28</td>
+            <td><a href='./drivers/39.html'>Oleksandr Maguran</a></td>
+            <td>75</td>
+            <td>7</td>
+            <td>259</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>2</td>
+            <td>9.99</td>
+            <td>9.12</td>
+            <td>P8 (S09)</td>
+        </tr>
+        <tr >
+            <td>29</td>
+            <td><a href='./drivers/56.html'>Anatolii Maksimiuk</a></td>
+            <td>35</td>
+            <td>13</td>
+            <td>255</td>
+            <td>2</td>
+            <td>2</td>
+            <td>0</td>
+            <td>7</td>
+            <td>5.77</td>
+            <td>4.77</td>
+            <td>P4 (S10)</td>
+        </tr>
+        <tr >
+            <td>30</td>
+            <td><a href='./drivers/58.html'>Nikita Tatarchenko</a></td>
+            <td>21</td>
+            <td>2</td>
+            <td>250</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>8</td>
+            <td>5.60</td>
+            <td>4.79</td>
+            <td>P2 (S13)</td>
+        </tr>
+        <tr >
+            <td>31</td>
+            <td><a href='./drivers/66.html'>Andrii Yarmolenko</a></td>
+            <td>36</td>
+            <td>7</td>
+            <td>245</td>
+            <td>1</td>
+            <td>0</td>
+            <td>3</td>
+            <td>4</td>
+            <td>8.25</td>
+            <td>6.38</td>
+            <td>P4 (S11)</td>
+        </tr>
+        <tr >
+            <td>32</td>
+            <td><a href='./drivers/32.html'>Roman Hrakun</a></td>
+            <td>13</td>
+            <td>3</td>
+            <td>218</td>
+            <td>8</td>
+            <td>9</td>
+            <td>4</td>
+            <td>8</td>
+            <td>1.90</td>
+            <td>2.10</td>
+            <td>P3 (S05)</td>
+        </tr>
+        <tr >
+            <td>33</td>
+            <td><a href='./drivers/40.html'>Myroslav Berezenko</a></td>
+            <td>57</td>
+            <td>4</td>
+            <td>213</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>10.94</td>
+            <td>9.42</td>
+            <td>P8 (S07)</td>
+        </tr>
+        <tr >
+            <td>34</td>
+            <td><a href='./drivers/80.html'>Serhii Hillenko</a></td>
+            <td>22</td>
+            <td>3</td>
+            <td>205</td>
+            <td>0</td>
+            <td>0</td>
+            <td>2</td>
+            <td>6</td>
+            <td>6.68</td>
+            <td>5.79</td>
+            <td>P3 (S11)</td>
+        </tr>
+        <tr >
+            <td>35</td>
+            <td><a href='./drivers/9.html'>Dmytro (fee1good_ukr)</a></td>
+            <td>50</td>
+            <td>13</td>
+            <td>185</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>10.56</td>
+            <td>8.19</td>
+            <td>P7 (S01)</td>
+        </tr>
+        <tr >
+            <td>36</td>
+            <td><a href='./drivers/22.html'>Alex Kulbii</a></td>
+            <td>51</td>
+            <td>4</td>
+            <td>172</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>11.69</td>
+            <td>9.06</td>
+            <td>P13 (S04, S07)</td>
+        </tr>
+        <tr >
+            <td>37</td>
+            <td><a href='./drivers/67.html'>Illia Kochev</a></td>
+            <td>36</td>
+            <td>4</td>
+            <td>144</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>11.72</td>
+            <td>9.00</td>
+            <td>P10 (S11)</td>
+        </tr>
+        <tr >
+            <td>38</td>
+            <td><a href='./drivers/89.html'>Anton Chebotarov</a></td>
+            <td>11</td>
+            <td>3</td>
+            <td>142</td>
+            <td>4</td>
+            <td>4</td>
+            <td>2</td>
+            <td>4</td>
+            <td>3.64</td>
+            <td>2.88</td>
+            <td>P4 (S13)</td>
+        </tr>
+        <tr >
+            <td>39</td>
+            <td><a href='./drivers/33.html'>Borys Zakharov</a></td>
+            <td>14</td>
+            <td>0</td>
+            <td>138</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>6</td>
+            <td>9.33</td>
+            <td>5.64</td>
+            <td>P6 (S05)</td>
+        </tr>
+        <tr >
+            <td>40</td>
+            <td><a href='./drivers/48.html'>Yurii Oros</a></td>
+            <td>53</td>
+            <td>12</td>
+            <td>131</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>12.09</td>
+            <td>9.68</td>
+            <td>P10 (S09)</td>
+        </tr>
+        <tr >
+            <td>41</td>
+            <td><a href='./drivers/57.html'>Tymofiy Troschak</a></td>
+            <td>19</td>
+            <td>10</td>
+            <td>125</td>
+            <td>2</td>
+            <td>1</td>
+            <td>1</td>
+            <td>3</td>
+            <td>5.33</td>
+            <td>4.33</td>
+            <td>P11 (S11)</td>
+        </tr>
+        <tr >
+            <td>42</td>
+            <td><a href='./drivers/10.html'>Nemo_ArsHnt</a></td>
+            <td>22</td>
+            <td>1</td>
+            <td>125</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>7.72</td>
+            <td>7.29</td>
+            <td>P9 (S01)</td>
+        </tr>
+        <tr >
+            <td>43</td>
+            <td><a href='./drivers/68.html'>Denys Zabarnyi</a></td>
+            <td>30</td>
+            <td>1</td>
+            <td>125</td>
+            <td>0</td>
+            <td>0</td>
+            <td>2</td>
+            <td>0</td>
+            <td>9.29</td>
+            <td>9.07</td>
+            <td>P11 (S12, S13)</td>
+        </tr>
+        <tr >
+            <td>44</td>
+            <td><a href='./drivers/34.html'>Mykhailo Kolesnik</a></td>
+            <td>10</td>
+            <td>2</td>
+            <td>106</td>
+            <td>2</td>
+            <td>1</td>
+            <td>1</td>
+            <td>4</td>
+            <td>5.75</td>
+            <td>4.88</td>
+            <td>P9 (S05)</td>
+        </tr>
+        <tr >
+            <td>45</td>
+            <td><a href='./drivers/28.html'>Volodymyr (zmkxx)</a></td>
+            <td>11</td>
+            <td>0</td>
+            <td>105</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>3</td>
+            <td>8.88</td>
+            <td>6.18</td>
+            <td>P8 (S04)</td>
+        </tr>
+        <tr >
+            <td>46</td>
+            <td><a href='./drivers/41.html'>Oleksandr Pidoprygora</a></td>
+            <td>17</td>
+            <td>5</td>
+            <td>104</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>9.59</td>
+            <td>6.75</td>
+            <td>P9 (S07)</td>
+        </tr>
+        <tr >
+            <td>47</td>
+            <td><a href='./drivers/23.html'>Anton Kadusov</a></td>
+            <td>15</td>
+            <td>3</td>
+            <td>95</td>
+            <td>0</td>
+            <td>2</td>
+            <td>2</td>
+            <td>4</td>
+            <td>7.29</td>
+            <td>7.08</td>
+            <td>P14 (S03)</td>
+        </tr>
+        <tr >
+            <td>48</td>
+            <td><a href='./drivers/35.html'>Vadym Senin</a></td>
+            <td>16</td>
+            <td>9</td>
+            <td>84</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>2</td>
+            <td>9.42</td>
+            <td>4.29</td>
+            <td>P11 (S05)</td>
+        </tr>
+        <tr >
+            <td>49</td>
+            <td><a href='./drivers/29.html'>Georgiy Metalidi</a></td>
+            <td>37</td>
+            <td>12</td>
+            <td>84</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>9.87</td>
+            <td>9.28</td>
+            <td>P11 (S06)</td>
+        </tr>
+        <tr >
+            <td>50</td>
+            <td><a href='./drivers/49.html'>Andrii Pechuliak</a></td>
+            <td>30</td>
+            <td>14</td>
+            <td>69</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>13.76</td>
+            <td>8.94</td>
+            <td>P13 (S09)</td>
+        </tr>
+        <tr >
+            <td>51</td>
+            <td><a href='./drivers/69.html'>Andrii Duda</a></td>
+            <td>15</td>
+            <td>3</td>
+            <td>68</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>8.60</td>
+            <td>7.58</td>
+            <td>P14 (S10, S11)</td>
+        </tr>
+        <tr >
+            <td>52</td>
+            <td><a href='./drivers/70.html'>Vladislav Lugansky</a></td>
+            <td>7</td>
+            <td>1</td>
+            <td>59</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>7.00</td>
+            <td>5.83</td>
+            <td>P8 (S10)</td>
+        </tr>
+        <tr >
+            <td>53</td>
+            <td><a href='./drivers/11.html'>Mykola (Nikotin_007)</a></td>
+            <td>55</td>
+            <td>9</td>
+            <td>58</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>11.78</td>
+            <td>10.91</td>
+            <td>P11 (S01)</td>
+        </tr>
+        <tr >
+            <td>54</td>
+            <td><a href='./drivers/24.html'>Mykhailo (Ochkastaya)</a></td>
+            <td>28</td>
+            <td>5</td>
+            <td>46</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>12.67</td>
+            <td>11.22</td>
+            <td>P15 (S04)</td>
+        </tr>
+        <tr >
+            <td>55</td>
+            <td><a href='./drivers/50.html'>Serhii (UniF1)</a></td>
+            <td>14</td>
+            <td>5</td>
+            <td>45</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>9.00</td>
+            <td>7.89</td>
+            <td>P15 (S08)</td>
+        </tr>
+        <tr >
+            <td>56</td>
+            <td><a href='./drivers/97.html'>Oleksandr Korzhovskiy</a></td>
+            <td>9</td>
+            <td>1</td>
+            <td>44</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>9.67</td>
+            <td>8.25</td>
+            <td>P10 (S13)</td>
+        </tr>
+        <tr >
+            <td>57</td>
+            <td><a href='./drivers/25.html'>Oleksandr (Shaveshov5)</a></td>
+            <td>3</td>
+            <td>1</td>
+            <td>31</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1</td>
+            <td>3.00</td>
+            <td>3.00</td>
+            <td>P17 (S03)</td>
+        </tr>
+        <tr >
+            <td>58</td>
+            <td><a href='./drivers/71.html'>Mariia Rusova</a></td>
+            <td>16</td>
+            <td>3</td>
+            <td>25</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>13.62</td>
+            <td>11.54</td>
+            <td>P16 (S10)</td>
+        </tr>
+        <tr >
+            <td>59</td>
+            <td><a href='./drivers/42.html'>Kostiantyn Romanenko</a></td>
+            <td>1</td>
+            <td>0</td>
+            <td>15</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>1</td>
+            <td>1.00</td>
+            <td>3.00</td>
+            <td>P16 (S07)</td>
+        </tr>
+        <tr >
+            <td>60</td>
+            <td><a href='./drivers/59.html'>Taras Obleschuk</a></td>
+            <td>10</td>
+            <td>3</td>
+            <td>15</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>12.00</td>
+            <td>10.71</td>
+            <td>P21 (S09)</td>
+        </tr>
+        <tr >
+            <td>61</td>
+            <td><a href='./drivers/43.html'>Kyrylo (yudaevich)</a></td>
+            <td>4</td>
+            <td>2</td>
+            <td>14</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>8.25</td>
+            <td>8.00</td>
+            <td>P17 (S07)</td>
+        </tr>
+        <tr >
+            <td>62</td>
+            <td><a href='./drivers/16.html'>Alkeeper</a></td>
+            <td>2</td>
+            <td>0</td>
+            <td>12</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>8.50</td>
+            <td>7.00</td>
+            <td>P15 (S02)</td>
+        </tr>
+        <tr >
+            <td>63</td>
+            <td><a href='./drivers/60.html'>Ihor Khimenchuk</a></td>
+            <td>3</td>
+            <td>2</td>
+            <td>10</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>5.67</td>
+            <td>5.00</td>
+            <td>P23 (S09)</td>
+        </tr>
+        <tr >
+            <td>64</td>
+            <td><a href='./drivers/75.html'>Jan Chornomorets</a></td>
+            <td>11</td>
+            <td>5</td>
+            <td>10</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>12.91</td>
+            <td>12.00</td>
+            <td>P17 (S13)</td>
+        </tr>
+        <tr >
+            <td>65</td>
+            <td><a href='./drivers/98.html'>Serhii Yaniuk</a></td>
+            <td>9</td>
+            <td>2</td>
+            <td>9</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>13.56</td>
+            <td>12.29</td>
+            <td>P18 (S13)</td>
+        </tr>
+        <tr >
+            <td>66</td>
+            <td><a href='./drivers/30.html'>Maksym (tony00mahony)</a></td>
+            <td>9</td>
+            <td>3</td>
+            <td>8</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>13.17</td>
+            <td>10.17</td>
+            <td>P15 (S06)</td>
+        </tr>
+        <tr >
+            <td>67</td>
+            <td><a href='./drivers/17.html'>Roman Honcharov</a></td>
+            <td>2</td>
+            <td>0</td>
+            <td>6</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>11.00</td>
+            <td>9.50</td>
+            <td>P17 (S02)</td>
+        </tr>
+        <tr >
+            <td>68</td>
+            <td><a href='./drivers/44.html'>Oleksandr Avdeyev</a></td>
+            <td>3</td>
+            <td>2</td>
+            <td>6</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>13.67</td>
+            <td>9.00</td>
+            <td>P20 (S07)</td>
+        </tr>
+        <tr >
+            <td>69</td>
+            <td><a href='./drivers/72.html'>Bohdan Pasichenko</a></td>
+            <td>6</td>
+            <td>2</td>
+            <td>6</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>14.17</td>
+            <td>10.25</td>
+            <td>P23 (S10)</td>
+        </tr>
+        <tr >
+            <td>70</td>
+            <td><a href='./drivers/45.html'>Alessandro_lightshot</a></td>
+            <td>1</td>
+            <td>0</td>
+            <td>5</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>9.00</td>
+            <td>10.00</td>
+            <td>P21 (S07)</td>
+        </tr>
+        <tr >
+            <td>71</td>
+            <td><a href='./drivers/61.html'>Dmytro Hrebelnyk</a></td>
+            <td>1</td>
+            <td>0</td>
+            <td>4</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>10.00</td>
+            <td>8.00</td>
+            <td>P25 (S09)</td>
+        </tr>
+        <tr >
+            <td>72</td>
+            <td><a href='./drivers/73.html'>Andrii Koliada</a></td>
+            <td>8</td>
+            <td>2</td>
+            <td>4</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>13.12</td>
+            <td>11.00</td>
+            <td>P24 (S10)</td>
+        </tr>
+        <tr >
+            <td>73</td>
+            <td><a href='./drivers/18.html'>Slava (dotslavon)</a></td>
+            <td>9</td>
+            <td>3</td>
+            <td>4</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>11.30</td>
+            <td>12.00</td>
+            <td>P18 (S02)</td>
+        </tr>
+        <tr >
+            <td>74</td>
+            <td><a href='./drivers/31.html'>Mykyta Isayev</a></td>
+            <td>9</td>
+            <td>3</td>
+            <td>4</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>13.33</td>
+            <td>12.17</td>
+            <td>P18 (S04)</td>
+        </tr>
+        <tr >
+            <td>75</td>
+            <td><a href='./drivers/85.html'>Illia Kosianchuk</a></td>
+            <td>2</td>
+            <td>0</td>
+            <td>3</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>13.50</td>
+            <td>13.50</td>
+            <td>P21 (S12)</td>
+        </tr>
+        <tr >
+            <td>76</td>
+            <td><a href='./drivers/86.html'>Bohdan Lychak</a></td>
+            <td>3</td>
+            <td>2</td>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>16.00</td>
+            <td>11.00</td>
+            <td>P22 (S12)</td>
+        </tr>
+        <tr >
+            <td>77</td>
+            <td><a href='./drivers/74.html'>Artem Osykhovskyi</a></td>
+            <td>12</td>
+            <td>8</td>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>11.08</td>
+            <td>13.50</td>
+            <td>P24 (S12)</td>
+        </tr>
+        <tr >
+            <td>78</td>
+            <td><a href='./drivers/100.html'>Tymur Hinetov</a></td>
+            <td>1</td>
+            <td>0</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>16.00</td>
+            <td>12.00</td>
+            <td>P19 (S13)</td>
+        </tr>
+        <tr >
+            <td>79</td>
+            <td><a href='./drivers/99.html'>Viacheslav Pyptenko</a></td>
+            <td>5</td>
+            <td>3</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>14.40</td>
+            <td>12.50</td>
+            <td>P20 (S13)</td>
+        </tr>
+        <tr >
+            <td>80</td>
+            <td><a href='./drivers/51.html'>Yurii Mazur</a></td>
+            <td>9</td>
+            <td>5</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>14.56</td>
+            <td>12.75</td>
+            <td>P19 (S08)</td>
+        </tr>
+        <tr >
+            <td>81</td>
+            <td><a href='./drivers/63.html'>Dmytro Nikiforov</a></td>
+            <td>16</td>
+            <td>9</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>15.88</td>
+            <td>14.71</td>
+            <td>P26 (S12)</td>
+        </tr>
+        <tr >
+            <td>82</td>
+            <td><a href='./drivers/62.html'>Roman Karakhanian</a></td>
+            <td>26</td>
+            <td>13</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>15.00</td>
+            <td>13.15</td>
+            <td>P24 (S11)</td>
+        </tr>
+        <tr >
+            <td>83</td>
+            <td><a href='./drivers/26.html'>DTomSawyer</a></td>
+            <td>3</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>12.67</td>
+            <td>13.50</td>
+            <td>P23 (S03)</td>
+        </tr>
+        <tr >
+            <td>84</td>
+            <td><a href='./drivers/84.html'>Vitalii Sorotskyi</a></td>
+            <td>4</td>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>14.00</td>
+            <td>15.00</td>
+            <td>P30 (S11)</td>
+        </tr>
+        <tr >
+            <td>85</td>
+            <td><a href='./drivers/52.html'>DarkHimera86</a></td>
+            <td>7</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>13.14</td>
+            <td>13.33</td>
+            <td>P20 (S08)</td>
+        </tr>
+        <tr >
+            <td>86</td>
+            <td><a href='./drivers/76.html'>Nazar Shtefaniuk</a></td>
+            <td>11</td>
+            <td>6</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>14.27</td>
+            <td>15.40</td>
+            <td>P22 (S11)</td>
+        </tr>
+        <tr >
+            <td>87</td>
+            <td><a href='./drivers/82.html'>Roman Kovsh</a></td>
+            <td>20</td>
+            <td>7</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>16.50</td>
+            <td>15.31</td>
+            <td>P25 (S12)</td>
+        </tr>
+        <tr >
+            <td>88</td>
+            <td><a href='./drivers/36.html'>Amir Yusupov</a></td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>20.00</td>
+            <td>0.00</td>
+            <td>P22 (S05)</td>
+        </tr>
+        <tr >
+            <td>89</td>
+            <td><a href='./drivers/77.html'>Viktor Tymoshenko</a></td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>10.00</td>
+            <td>0.00</td>
+            <td>P33 (S10)</td>
+        </tr>
+        <tr >
+            <td>90</td>
+            <td><a href='./drivers/88.html'>Vladyslav Borzdov</a></td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>20.00</td>
+            <td>0.00</td>
+            <td>P32 (S12)</td>
+        </tr>
+        <tr >
+            <td>91</td>
+            <td><a href='./drivers/95.html'>Hrihorii Kalashnyk</a></td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>15.00</td>
+            <td>0.00</td>
+            <td>P24 (S13)</td>
+        </tr>
+        <tr >
+            <td>92</td>
+            <td><a href='./drivers/101.html'>Vitalii Vaskivskyi</a></td>
+            <td>1</td>
+            <td>1</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>14.00</td>
+            <td>0.00</td>
+            <td>P25 (S13)</td>
+        </tr>
+        <tr >
+            <td>93</td>
+            <td><a href='./drivers/64.html'>Vitalii Kozinskiy</a></td>
+            <td>2</td>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>12.00</td>
+            <td>0.00</td>
+            <td>P31 (S09)</td>
+        </tr>
+        <tr >
+            <td>94</td>
+            <td><a href='./drivers/87.html'>Danylo Palazhchenko</a></td>
+            <td>3</td>
+            <td>3</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>14.67</td>
+            <td>0.00</td>
+            <td>P31 (S12)</td>
+        </tr>
+        <tr >
+            <td>95</td>
+            <td><a href='./drivers/83.html'>Oleksandr Rumiantsev</a></td>
+            <td>4</td>
+            <td>4</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>17.25</td>
+            <td>0.00</td>
+            <td>P30 (S12)</td>
+        </tr></tbody></table>
+    </div>
+    <footer class="site-footer">
+        <div class="sponsors">
+            <a href="https://www.instagram.com/okuni.seats/" target="_blank" rel="noopener noreferrer"><img src="img/okunilogo.png" alt="Okuni Logo" class="okuni-logo"></a>
+            <a href="https://de2ua.com/uk" target="_blank" rel="noopener noreferrer"><img src="img/de2logo.png" alt="DE2 Logo"></a>
+            <a href="https://playseat.com/" target="_blank" rel="noopener noreferrer"><img src="img/playseatlogo.png" alt="Playseat Logo"></a>
+        </div>
+        Generated on 2025-11-08 19:24:12
+    </footer>
+</body>
+</html>
